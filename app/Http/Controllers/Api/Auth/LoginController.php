@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Exception;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\Controller;
+use App\Course;
 
 class LoginController extends Controller
 {
@@ -11,12 +13,11 @@ class LoginController extends Controller
     {
         $credentials = $request->only(['email', 'password']);
 
-        if (! $token = auth()->attempt($credentials))
-        {
-            return response()->json(['error' => 'Incorrect credentials'], 400);
+        if (!$token = auth()->attempt($credentials)) {
+            return response()->json(['status' => 400, 'message' => 'Incorrect credentials'], 400);
         }
 
-        return response()->json(['token' => $token]);
+        return response()->json(['status' => 200, 'message' => 'Login successful', 'data' => ['token' => $token]]);
     }
 
     // public function isLoggedIn()
