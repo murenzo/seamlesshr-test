@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Course;
 use Illuminate\Http\Request;
+use App\Exports\CourseExport;
 use App\Jobs\PopulateCourseTable;
-use App\Http\Controllers\Api\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Database\QueryException;
+use App\Http\Controllers\Api\Controller;
 
 class CourseController extends Controller
 {
@@ -51,6 +53,11 @@ class CourseController extends Controller
         }
 
         return response()->json(['status' => 401, 'message' => $auth], 401);
+    }
+
+    public function download()
+    {
+        return Excel::download(new CourseExport, 'courses.csv');
     }
 
     private function hasAlienCourseIds(array $courseIds)

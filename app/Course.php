@@ -18,6 +18,5 @@ class Course extends Model
     {
         $registeredUser = $this->users()->wherePivot('user_id', auth()->getUser()->id)->first(['course_user.created_at']);
         return $registeredUser ? $registeredUser->created_at->format('Y-m-d') : null;
-        // return auth()->getUser();
     }
 }

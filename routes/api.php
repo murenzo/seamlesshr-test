@@ -1,6 +1,8 @@
 <?php
 
+use App\Exports\CourseExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,5 +29,6 @@ Route::prefix('v1')->group(function () {
         Route::get('', ['as' => 'course.index', 'uses' => 'Api\CourseController@index']);
         Route::get('populate', ['as' => 'course.populate', 'uses' => 'Api\CourseController@populate']);
         Route::post('register', ['as' => 'course.register', 'uses' => 'Api\CourseController@register']);
+        Route::get('download', ['as' => 'course.download', 'uses' => 'Api\CourseController@download']);
     });
 });
