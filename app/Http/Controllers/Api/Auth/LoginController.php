@@ -19,15 +19,4 @@ class LoginController extends Controller
 
         return response()->json(['status' => 200, 'message' => 'Login successful', 'data' => ['token' => $token]]);
     }
-
-    // public function isLoggedIn()
-    // {
-    //     try {
-    //         $user = auth()->userOrFail();
-    //     } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
-    //         return response()->json(['error' => $e->getMessage()]);
-    //     }
-
-    //     return $user->id;
-    // }
 }

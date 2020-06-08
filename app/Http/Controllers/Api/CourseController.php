@@ -12,6 +12,11 @@ use App\Http\Controllers\Api\Controller;
 
 class CourseController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('api.token');
+    }
+
     public function index()
     {
         return Course::all()->toArray();
@@ -19,40 +24,31 @@ class CourseController extends Controller
 
     public function populate()
     {
-        if (!$auth = $this->isLoggedIn()) {
-            $status = $this->dispatch(new PopulateCourseTable());
+        $status = $this->dispatch(new PopulateCourseTable());
 
-            if (!$status) {
-                return response()->json(['status' => 500, 'message' => 'Something went wrong. Try again'], 500);
-            }
-
-            return response()->json(['status' => 200, 'message' => 'Populating the course table has been queued successfully'], 200);
+        if (!$status) {
+            return response()->json(['status' => 500, 'message' => 'Something went wrong. Try again'], 500);
         }
 
-        return response()->json(['status' => 401, 'message' => $auth], 401);
+        return response()->json(['status' => 200, 'message' => 'Populating the course table has been queued successfully'], 200);
     }
 
     public function register(Request $request)
     {
         $courseIds =  $request['courseIds'];
 
-        if (!$auth = $this->isLoggedIn()) {
-
-            if (!$courseIds || $this->hasAlienCourseIds($courseIds)) {
-                return response()->json(['status' => 400, 'message' => 'Bad request'], 400);
-            }
-
-            try {
-                auth()->getUser()->courses()->attach($courseIds);
-            } catch (QueryException $e) {
-                return response()->json(['status' => 500, 'message' => 'Hope you are not trying to register a course twice'], 500);
-            }
-
-
-            return response()->json(['status' => 200, 'message' => 'Course registeration successful'], 200);
+        if (!$courseIds || $this->hasAlienCourseIds($courseIds)) {
+            return response()->json(['status' => 400, 'message' => 'Bad request'], 400);
         }
 
-        return response()->json(['status' => 401, 'message' => $auth], 401);
+        try {
+            auth()->getUser()->courses()->attach($courseIds);
+        } catch (QueryException $e) {
+            return response()->json(['status' => 500, 'message' => 'Hope you are not trying to register a course twice'], 500);
+        }
+
+
+        return response()->json(['status' => 200, 'message' => 'Course registeration successful'], 200);
     }
 
     public function download()
@@ -63,16 +59,5 @@ class CourseController extends Controller
     private function hasAlienCourseIds(array $courseIds)
     {
         return array_diff($courseIds, Course::pluck('id')->toArray());
-    }
-
-    private function isLoggedIn()
-    {
-        try {
-            $user = auth()->userOrFail();
-        } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
-            return 'User unauthorized';
-        }
-
-        return false;
     }
 }

@@ -16,10 +16,6 @@ use Maatwebsite\Excel\Facades\Excel;
 */
 
 Route::prefix('v1')->group(function () {
-    Route::get('test', function (Request $request) {
-        return response()->json(['data' => 'I got tested']);
-    });
-
     Route::prefix('auth')->group(function () {
         Route::post('register', ['as' => 'auth.register', 'uses' => 'Api\Auth\RegisterController@register']);
         Route::post('login', ['as' => 'auth.login', 'uses' => 'Api\Auth\LoginController@login']);
